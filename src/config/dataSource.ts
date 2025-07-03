@@ -1,8 +1,12 @@
 import { DataSource } from "typeorm";
 import dotenv from "dotenv"
-import { user } from "../model/user";
+import { user } from "../model/userModel";
+import { post } from "../model/postModel";
+
 
 dotenv.config();
+
+export const JWT_SECRET = process.env.JWT_SECRET
 
 export const AppDataSource = new DataSource({
     type: "postgres",
@@ -15,5 +19,5 @@ export const AppDataSource = new DataSource({
     logging: false,
     subscribers: [],
     migrations: [],
-    entities: [user],
-})
+    entities: [user, post],
+})      

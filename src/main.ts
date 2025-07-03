@@ -1,23 +1,32 @@
-import express, {Request, Response} from "express";
-import dotenv from "dotenv"
+import express, {NextFunction, Request, Response} from "express";
 import { AppDataSource } from "./config/dataSource";
-import { userRouter } from "./router/userRouter";
+
+
+import { authRouter } from "./routes/authRouter";
+import { postRouter } from "./routes/postRouter";
+import { auth } from "./middlewares/authMiddleware";
 
 const app = express()
-dotenv.config()
+
 app.use(express.json());
-
-
 app.get("/", (req: Request, res: Response) =>{
   res.send("server is running ");
 })
+app.use('/auth', authRouter);
+app.use(auth);
+app.use('/posts' ,postRouter);
 
-app.listen(3000, () =>{
-  console.log("server is running on port 3000")
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  if (err.name === 'UnauthorizedError') {
+    res.status(401).json({ error: 'Unauthorized: Invalid or missing token' });
+  } else {
+    next(err);
+  }
+});
+
+app.listen(4000, () =>{
+  console.log("server is running on port 4000")
 })
-
-app.use('/user', userRouter);
-
 AppDataSource.initialize()
     .then(() => {
         console.log("Database initialized successfuly")
