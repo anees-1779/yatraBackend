@@ -1,10 +1,8 @@
 import express, {NextFunction, Request, Response} from "express";
 import { AppDataSource } from "./config/dataSource";
-
-
-import { authRouter } from "./routes/authRouter";
-import { postRouter } from "./routes/postRouter";
 import { auth } from "./middlewares/authMiddleware";
+import { authRouter } from "./routes/authRouter/authRouter";
+import { postRouter } from "./routes/postRouter/postRouter";
 
 const app = express()
 
@@ -14,7 +12,7 @@ app.get("/", (req: Request, res: Response) =>{
 })
 app.use('/auth', authRouter);
 app.use(auth);
-app.use('/posts' ,postRouter);
+app.use('/post' ,postRouter);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   if (err.name === 'UnauthorizedError') {

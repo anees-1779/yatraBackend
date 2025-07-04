@@ -4,11 +4,14 @@ import { post } from "./postModel"
 @Entity()
 export class user {
     @PrimaryGeneratedColumn()
-    id!: Number
+    id!: number
 
     @Column()
     name!: String
 
+    @Column()
+    username!:String
+    
     @Column()
     role!: String
 
@@ -19,10 +22,10 @@ export class user {
     password!: String
     
     @Column()
-    age!: Number  
+    age!: number  
 
-    @Column()
-    phone_number!: Number
+    @Column({type: "bigint"})
+    phone_number!: number
 
     @OneToMany(() => post, (post:any) => post.user)
     posts!: post[];

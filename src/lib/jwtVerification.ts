@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { JWT_SECRET } from "../config/dataSource"; 
+import { promises } from "dns";
 
 
 declare global {
@@ -11,7 +12,7 @@ declare global {
   }
 }
 
-export const verifyToken = (req: Request, res: Response, next: NextFunction): void => {
+export const verifyToken = async (req: Request, res: Response, next: NextFunction)=> {
   try {
     const authHeader = req.headers.authorization;
     console.log("verification is being called")
@@ -21,7 +22,7 @@ export const verifyToken = (req: Request, res: Response, next: NextFunction): vo
     }
 
     const token = authHeader.split(" ")[1]; 
-    const decoded = jwt.verify(token, JWT_SECRET as string);
+    const decoded = await jwt.verify(token, JWT_SECRET as string);
     console.log(decoded)
     if (!decoded) {
       res.status(401).json({ message: "Invalid token structure" });
