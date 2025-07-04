@@ -5,7 +5,7 @@ import * as yup from 'yup';
 
 const postRepository = AppDataSource.getRepository(post)
 
-interface user{
+export interface decodedUser{
   name: string;
   role: string,
   age: number,
@@ -29,7 +29,7 @@ export const addPost = async (req: Request, res: Response) =>{
    try{  
       console.log("addpost is being called")
       const postInfo = req.body;
-      const user = req.user as user
+      const user = req.user as decodedUser
       const userId = user.id
       await postSchema.validate(req.body);
 
@@ -55,7 +55,7 @@ export const editPost = async (req: Request, res: Response) =>{
      try{  
       console.log("editPost is being called")
       const postInfo = req.body;
-      const user = req.user as user
+      const user = req.user as decodedUser
       const userId = user.id
       await postSchema.validate(req.body);
 
@@ -81,7 +81,7 @@ export const deletePost = async (req: Request, res: Response) =>{
   try{  
       console.log("deletePost is being called")
       const postId = req.params.id;
-      const user = req.user as user
+      const user = req.user as decodedUser
       const findPost = await postRepository.findOne({where: {id: Number(postId)}})
       if(!findPost){
         res.status(404).json({

@@ -22,7 +22,7 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
     }
 
     const token = authHeader.split(" ")[1]; 
-    const decoded = await jwt.verify(token, JWT_SECRET as string);
+    const decoded = jwt.verify(token, JWT_SECRET as string);
     console.log(decoded)
     if (!decoded) {
       res.status(401).json({ message: "Invalid token structure" });

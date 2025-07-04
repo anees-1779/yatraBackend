@@ -5,7 +5,7 @@ import { checkPassword, hashedPassword } from "../../lib/hashPassword";
 import { generateToken } from "../../lib/jwtVerification";
 import * as yup from 'yup';
 
-const userRepository = AppDataSource.getRepository(user);
+export const userRepository = AppDataSource.getRepository(user);
 
 const userSchema = yup.object({
   name: yup.string().required('Name is required'),
