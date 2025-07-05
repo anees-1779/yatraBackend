@@ -2,6 +2,8 @@ import { Request, Response } from "express"
 import { userRepository } from "../auth/auth";
 import { decodedUser } from "../post/postController";
 import { user } from "../../model/userModel";
+import { checkPassword, hashpassword } from "../../lib/hashPassword";
+
 
 export const editDetails = async (req: Request, res: Response) =>{
   try{
@@ -69,4 +71,37 @@ export const deleteUser = async (req: Request, res: Response) =>{
       })
     }
 
+}
+
+export const changePassword = async (req: Request, res: Response) =>{
+ try{ 
+  const { oldPassword, newPassword } = req.body;
+  const getUser = req.user as decodedUser;
+  const userId = getUser.id;
+  const usersDetail = await userRepository.findOne({where: {id: userId}})
+  const usersPassword = usersDetail?.password
+  console.log(usersPassword)
+  const verifyOldPassword = await checkPassword(oldPassword, usersPassword as string)
+  console.log(verifyOldPassword)
+  if(!verifyOldPassword){
+    res.status(403).json({
+      message: "Your old password doesnot match"
+    })
+    return;
+  }
+  const hashedPassword = await hashpassword(newPassword);
+  await userRepository.createQueryBuilder()
+                      .update()
+                      .set({
+                        password: hashedPassword
+                      })
+                      .execute()
+  res.status(200).json({
+    message: "Password updated successfully"
+  })
+}catch(error){
+  res.status(400).json({
+    message: error
+  })
+}
 }

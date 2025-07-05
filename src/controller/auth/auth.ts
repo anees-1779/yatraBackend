@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import { user } from "../../model/userModel";
 import { AppDataSource } from "../../config/dataSource";
-import { checkPassword, hashedPassword } from "../../lib/hashPassword";
+import { checkPassword, hashpassword } from "../../lib/hashPassword";
 import { generateToken } from "../../lib/jwtVerification";
 import * as yup from 'yup';
 
@@ -49,9 +49,9 @@ export const  registerUser = async (req:Request, res:Response)=>{
     })
     return
     }
-    const hashPassword = await hashedPassword(userInfo.password)
+    const hashedPassword = await hashpassword(userInfo.password)
       let newUser = {...userInfo}
-      newUser.password = hashPassword
+      newUser.password = hashedPassword
       await userRepository.save(newUser);
       res.status(200).send({
         message: "User added successfully"
@@ -83,8 +83,9 @@ export const loginUser = async (req: Request, res: Response) =>{
     })
     return;
   }
-  await checkPassword(password, String(checkUser.password))
-  if(!checkPassword){
+  const verifyPassword = await checkPassword(password, String(checkUser.password))
+  console.log(verifyPassword)
+  if(!verifyPassword){
     res.status(401).send({
       message: "Incorrect password" 
     })
