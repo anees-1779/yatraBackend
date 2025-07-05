@@ -1,8 +1,10 @@
 import { Request, Response } from "express"
 import { userRepository } from "../auth/auth";
 import { decodedUser } from "../post/postController";
-import { user } from "../../model/userModel";
+import { user } from "../../model/userModel/userModel";
 import { checkPassword, hashpassword } from "../../lib/hashPassword";
+import { generateOtp } from "../../lib/optGenerator";
+import { sendResetPasswordMail } from "../../lib/mailer";
 
 
 export const editDetails = async (req: Request, res: Response) =>{
@@ -105,3 +107,65 @@ export const changePassword = async (req: Request, res: Response) =>{
   })
 }
 }
+
+export const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+
+    // Case 1: Only email is provided → Send OTP
+    if (email && !otp && !newPassword) {
+      const user = await userRepository.findOne({ where: { email } });
+
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return 
+      }
+
+      const generatedOtp = generateOtp();
+
+      await userRepository
+        .createQueryBuilder()
+        .update()
+        .set({ opt: generatedOtp })
+        .where({ id: user.id })
+        .execute();
+
+      await sendResetPasswordMail(generatedOtp, email);
+
+      res.status(200).json({ message: "OTP sent to email" });
+      return
+    }
+
+    // Case 2: OTP and new password are provided → Reset password
+    if (otp && newPassword) {
+      const user = await userRepository.findOne({ where: { opt: otp } });
+
+      if (!user) {
+         res.status(400).json({ message: "Invalid OTP" });
+         return
+      }
+      const hashedPassword = await hashpassword(newPassword)
+      await userRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          password: hashedPassword,
+          opt: '' // clear the otp
+        })
+        .where({ id: user.id })
+        .execute();
+
+       res.status(200).json({ message: "Password reset successfully" });
+       return
+    }
+
+    // Invalid request
+    res.status(400).json({ message: "Invalid request body" });
+      return
+
+  } catch (error) {
+    console.error("Reset password error:", error);
+    res.status(500).json({ message: "Something went wrong", error });
+    return 
+  }
+};

@@ -1,5 +1,5 @@
 import { Request, Response } from "express"
-import { user } from "../../model/userModel";
+import { user } from "../../model/userModel/userModel";
 import { AppDataSource } from "../../config/dataSource";
 import { checkPassword, hashpassword } from "../../lib/hashPassword";
 import { generateToken } from "../../lib/jwtVerification";
@@ -67,7 +67,6 @@ export const  registerUser = async (req:Request, res:Response)=>{
 }
 }
 
-
 export const loginUser = async (req: Request, res: Response) =>{
   const { email, password } = req.body;
   if(!email || !password)
@@ -84,6 +83,7 @@ export const loginUser = async (req: Request, res: Response) =>{
     return;
   }
   const verifyPassword = await checkPassword(password, String(checkUser.password))
+  const userId = Number(checkUser.id)
   console.log(verifyPassword)
   if(!verifyPassword){
     res.status(401).send({
@@ -91,13 +91,21 @@ export const loginUser = async (req: Request, res: Response) =>{
     })
     return;
   }
+  await userRepository.createQueryBuilder()
+                    .update(checkUser)
+                    .set({
+                      is_loggged_in: true
+                    })
+                    .where({id: userId})
+                    .execute()
   const payload = {
     name: checkUser.name,
     role: checkUser.role,
     age: Number(checkUser.age),
     email: checkUser.email,
     id: checkUser.id,
-    username: checkUser.username
+    username: checkUser.username,
+    is_logged_in: true
   }
   const token = generateToken(payload)
   res.status(200).send({

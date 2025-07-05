@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
-import { user } from "./userModel";
+import { user } from "../userModel/userModel";
+import { comment } from "./commentsModel";
 
 @Entity()
 export class post{
@@ -29,5 +30,8 @@ export class post{
 
   @ManyToOne(() => user, (user:any) => user.posts, { onDelete: 'CASCADE' })
   user!: user;
+
+  @ManyToOne(() => comment, (comment: any) => comment.posts, { onDelete: 'CASCADE' })
+  comment!: comment;
 }
 

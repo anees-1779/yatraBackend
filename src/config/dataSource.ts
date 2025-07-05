@@ -1,7 +1,9 @@
 import { DataSource } from "typeorm";
 import dotenv from "dotenv"
-import { user } from "../model/userModel";
-import { post } from "../model/postModel";
+import { user } from "../model/userModel/userModel";
+import { post } from "../model/postModel/postModel";
+import { like } from "../model/postModel/likesModel";
+import { comment } from "../model/postModel/commentsModel";
 
 
 dotenv.config();
@@ -19,5 +21,5 @@ export const AppDataSource = new DataSource({
     logging: false,
     subscribers: [],
     migrations: [],
-    entities: [user, post],
+    entities: [user, post, like, comment],
 })      

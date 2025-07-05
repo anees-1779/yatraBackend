@@ -11,7 +11,7 @@ export const auth = expressjwt({
         secret: JWT_SECRET as string,
         algorithms: ['HS256'],
         }).unless({
-        path: ['/public', 'auth/login', 'auth/register'],
+        path: ['/public', 'auth/login', 'auth/register','/user/reset-password'],
         });
 
 

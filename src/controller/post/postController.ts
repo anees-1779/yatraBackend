@@ -1,6 +1,6 @@
 import { Response, Request } from "express"
 import { AppDataSource } from "../../config/dataSource";
-import { post } from "../../model/postModel";
+import { post } from "../../model/postModel/postModel";
 import * as yup from 'yup';
 
 const postRepository = AppDataSource.getRepository(post)
