@@ -1,9 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { JWT_SECRET } from "../config/dataSource"; 
-import { promises } from "dns";
-
-
 declare global {
   namespace Express {
     interface Request {

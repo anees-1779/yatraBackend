@@ -3,7 +3,7 @@ import { AppDataSource } from "../../config/dataSource";
 import { post } from "../../model/postModel/postModel";
 import * as yup from 'yup';
 
-const postRepository = AppDataSource.getRepository(post)
+export const postRepository = AppDataSource.getRepository(post)
 
 export interface decodedUser{
   name: string;
