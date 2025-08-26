@@ -8,7 +8,6 @@ declare global {
     }
   }
 }
-
 export const verifyToken = async (req: Request, res: Response, next: NextFunction)=> {
   try {
     const authHeader = req.headers.authorization;

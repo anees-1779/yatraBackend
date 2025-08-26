@@ -4,6 +4,7 @@ import { user } from "../model/userModel/userModel";
 import { post } from "../model/postModel/postModel";
 import { like } from "../model/postModel/likesModel";
 import { comment } from "../model/postModel/commentsModel";
+import { picture } from "../model/postModel/imageModel";
 
 
 dotenv.config();
@@ -21,5 +22,5 @@ export const AppDataSource = new DataSource({
     logging: false,
     subscribers: [],
     migrations: [],
-    entities: [user, post, like, comment],
+    entities: [user, post, like, comment, picture],
 })      
