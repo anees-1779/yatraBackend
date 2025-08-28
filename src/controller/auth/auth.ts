@@ -36,8 +36,11 @@ const userSchema = yup.object({
 
 
 export const  registerUser = async (req:Request, res:Response)=>{
- try{ const  userInfo = req.body
-  console.log('Register user is being called')
+ try{ 
+  const  userInfo = req.body
+  console.log('Register user is being called', userInfo)
+  const num = userInfo.age
+  console.log(typeof(num))
   await userSchema.validate(req.body)
  
   const user:any  = await userRepository.findOne({
@@ -49,6 +52,7 @@ export const  registerUser = async (req:Request, res:Response)=>{
     })
     return
     }
+    console.log(user)
     const hashedPassword = await hashpassword(userInfo.password)
       let newUser = {...userInfo}
       newUser.password = hashedPassword
@@ -58,6 +62,7 @@ export const  registerUser = async (req:Request, res:Response)=>{
       })
     }catch (error) {
     if (error instanceof yup.ValidationError) {
+      console.log(error)
         res.status(400).json({
         message: "Validation failed",
         errors: error.errors, // contains array of all error messages
@@ -69,6 +74,7 @@ export const  registerUser = async (req:Request, res:Response)=>{
 
 export const loginUser = async (req: Request, res: Response) =>{
   const { email, password } = req.body;
+  console.log(email, password)
   if(!email || !password)
   {
     res.status(401).json({
@@ -110,6 +116,7 @@ export const loginUser = async (req: Request, res: Response) =>{
   const token = generateToken(payload)
   res.status(200).send({
     message:"login successful",
+    user: checkUser,
     token: token
   })
 

@@ -4,8 +4,16 @@ import { auth } from "./middlewares/authMiddleware";
 import { authRouter } from "./routes/authRouter/authRouter";
 import { postRouter } from "./routes/postRouter/postRouter";
 import { userRouter } from "./routes/user/userRoutes";
+import cors from "cors";
 
 const app = express()
+
+app.use(cors({
+  origin: "http://localhost:5173",   
+  credentials: true                  // if you need cookies or auth headers
+}));
+
+
 
 app.use(express.json());
 app.get("/", (req: Request, res: Response) =>{
